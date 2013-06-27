@@ -1,6 +1,6 @@
 '''
 Author: Kevin Chen
-Email: kvnchen@berkeley.edu
+Email: kvchen@berkeley.edu
 Description: API for interfacing with the MarketWatch Virtual Stock Exchange.
 
 '''
