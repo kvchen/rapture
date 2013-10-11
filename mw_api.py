@@ -20,11 +20,11 @@ from bs4 import BeautifulSoup
 
 class Portfolio():
     def __init__(self, credentials, game, stock_input):
-        '''Initiates a Portfolio object
+        """Initiates a Portfolio object
         @param credentials: list formatted as [username, password]
         @param game: the current MarketWatch game
         @param stock_input: list of [stock, shares]
-        '''
+        """
 
         self.session = self.get_session(credentials)
         self.tokens = self.session.cookies
@@ -35,9 +35,9 @@ class Portfolio():
 
 
     def get_session(self, credentials):
-        '''Obtains a Session object given credentials.
+        """Obtains a Session object given credentials.
         @param credentials: list formatted as [username, password]
-        '''
+        """
 
         s = requests.Session()
         payload = {
@@ -58,7 +58,7 @@ class Portfolio():
         
 
     def update_portfolio(self):
-        '''Updates the net worth and buyingpower of a Portfolio object.'''
+        """Updates the net worth and buyingpower of a Portfolio object."""
 
         try:
             r = self.session.get('http://www.marketwatch.com/game/%s/portfolio/holdings?name=null' % self.game)
@@ -90,10 +90,10 @@ class Portfolio():
             self.get_sharesgains(stock)
 
     def update_stockcounter(self, stock):
-        '''Updates the maximum number of times a stock can be bought
+        """Updates the maximum number of times a stock can be bought
         given the Portfolio buying power.
         @param stock: a Stock object
-        '''
+        """
 
         bg = stock.get_mw_price()
         self.update_portfolio()
@@ -105,11 +105,11 @@ class Portfolio():
 class Stock:
     '''Helper class for stock objects'''
     def __init__(self, session, game, info):
-        '''Initiates a stock object.
+        """Initiates a stock object.
         @param session: the session created in Portfolio.get_session()
         @param game: the current MarketWatch game
         @param info: params passed from stock_input
-        '''
+        """
 
         self.ticker = info[0]
 
@@ -147,12 +147,11 @@ class Stock:
         self.gainslow = 0
         self.gainslast = 0
         self.holdingshares = 0
-        
 
 
-    '''Data methods'''
+    """Data methods"""
     def get_mw_data(self):
-        '''Helper method for obtaining stock data.'''
+        """Helper method for obtaining stock data."""
 
         try:
             r = requests.get('http://www.marketwatch.com/investing/stock/%s' % self.ticker)
@@ -162,7 +161,7 @@ class Stock:
             return self.get_mw_data()
 
     def get_mw_percent(self):
-        '''Obtains the current percent change of a stock.'''
+        """Obtains the current percent change of a stock."""
 
         try:
             soup = self.get_mw_data()
@@ -172,7 +171,7 @@ class Stock:
             return self.get_mw_percent()
 
     def get_mw_price(self):
-        '''Obtains the current price change of a stock.'''
+        """Obtains the current price change of a stock."""
 
         try:
             soup = self.get_mw_data()
@@ -184,7 +183,7 @@ class Stock:
 
 
     def transaction(self, shares, action):
-        '''Carries out a transaction on a stock.'''
+        """Carries out a transaction on a stock."""
 
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         payload = [{'Fuid': self.symbol, 'Shares': str(shares), 'Type': action}]
@@ -193,24 +192,24 @@ class Stock:
             print "ERROR in transaction for %s :: %s" % (self.ticker, resp['message'])
 
     def get(self, shares):
-        '''Obtains a certain number of a stock.'''
+        """Obtains a certain number of a stock."""
 
         self.transaction(shares, ['Short', 'Buy'][self.action])
         print " --- %s: purchased %s shares ---" % (self.ticker, shares)
 
     def release(self):
-        '''Releases all currently held shares of a stock.'''
+        """Releases all currently held shares of a stock."""
 
         self.transaction(self.holdingshares, ['Cover', 'Sell'][self.action])
         self.holding = 0
         print " --- %s: released %s shares at gain of %s ---" % (self.ticker, self.shares, self.gains)
 
     def gtransaction(self):
-        '''Uses gevent to simultaneously carry out the maximum number of
-        transactions on a stock and beat the 1% share limit common to many
-        games.
-        NOTE: This may have been recently patched on their servers, and
-        may result in a ban from the game.'''
+        """Uses gevent to simultaneously carry out the maximum number of
+        transactions on a stock and beat the 1 percent share limit common to many
+        games. This may have been recently patched on their servers, and usage
+        may result in a ban from the game.
+        """
 
         payload = [{'Fuid': self.symbol, 'Shares': str(self.tradeshares), 'Type': ['Short', 'Buy'][self.action]}]
         rmap = (grequests.post(self.trade_URL, data = json.dumps(payload), cookies = self.tokens, headers = self.headers) for i in range(self.counter))

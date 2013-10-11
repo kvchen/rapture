@@ -1,7 +1,8 @@
 '''
 Author: Kevin Chen
-Email: kvnchen@berkeley.edu
-Description: A minimal high-frequency stock trading algorithm for MarketWatch.
+Email: kvchen@berkeley.edu
+Description: A minimal high-frequency stock trading algorithm for 
+             the MarketWatch VSE.
 NOTE: Does not work in real life, exploits infinite liquidity and lack
       of buying queue.
 
@@ -14,7 +15,7 @@ from mw_api import *
 
 
 '''Format stock_input as [['STOCK1', tradeshares1], ['STOCK2', tradeshares2], ...]
-Set tradeshares as 0 if you want the maximum number of shares.'''
+Set tradeshares as 0 if you wish to use the maximum number of shares.'''
 
 username = 'foo@bar.com'
 password = ''
